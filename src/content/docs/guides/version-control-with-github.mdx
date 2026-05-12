@@ -1,0 +1,360 @@
+---
+title: Version Control With GitHub
+description: How to  set up a Git/Github workflow
+author: Camleaf
+last-editor: Camleaf
+created-on: 26/05/10
+last-edited: 26/05/10
+---
+
+import { Steps, Card } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+import { Image } from 'astro:assets';
+
+import img_git_win_installer from '../../../assets/guides/version-control-with-github/01-git-win-download.png';
+import img_find_github_profile from '../../../assets/guides/version-control-with-github/02-find-github-profile.png';
+import img_create_repo from '../../../assets/guides/version-control-with-github/03-create-repo.png';
+import img_PAT_create from '../../../assets/guides/version-control-with-github/04-PAT-create.png';
+import img_PAT_mode_select from '../../../assets/guides/version-control-with-github/05-PAT-mode-select.png';
+import img_PAT_create_permissions from '../../../assets/guides/version-control-with-github/06-PAT-create-permissions.png';
+import img_find_branch_menu from '../../../assets/guides/version-control-with-github/07-find-branch-menu.png';
+import img_create_branch_menu from '../../../assets/guides/version-control-with-github/08-create-branch-menu.png';
+
+Version control is extremely important for storing CAD files and software files, and is essential when working on a shared project with other people. The most popular version control system is [Git](https://git-scm.com/), an open-source project, which is often paired using GitHub, developed by Microsoft, as a remote host.
+
+## Installing Git
+
+Firstly, we need to check if we have Git installed on our system.
+
+<Tabs syncKey="OSes">
+    <TabItem label="Linux">
+        Open the terminal with `Ctrl-Alt-t`, then run 
+        ```bash 
+        git -v
+        
+        # output should be something like:
+        git version x.xx.x
+        ```
+        
+        If the output is not what is specified above, install Git with one of the following commands then follow the instructions.
+        ```bash
+        
+        # Ubuntu/Debian
+        sudo apt-get install git
+
+        # Fedora
+        sudo dnf install git
+        ```
+    
+        Now, you should be able to use Git from any terminal session on your computer.
+    </TabItem>
+    <TabItem label="Windows">
+        :::tip
+            If using the [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/) (WSL), switch back to the `Linux` tab.
+        :::
+
+        Search in your start menu for `Git Bash`. If it does not show up, then go to the official site for Git, [git-scm.com](https://git-scm.com/install/windows), and download the standalone installer `Git for Windows/x64 Setup`.
+
+        <Image src={img_git_win_installer} width={400} alt="Download for Git Windows installer" />
+
+        Launch the installer by double-clicking on it, then agree to the GNU [General Public License](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html),and use all the default settings on the installer. 
+        
+        You should be now able to launch Git Bash by searching from the Start Menu on your PC, or from right-click in the file browser, and this is where you will use the Git CLI.
+
+        :::tip
+            Windows generally uses backslashes (`\`) to divide files and folders in its paths, but Git Bash uses forward slashes, (`/`), to emulate Linux.
+        :::
+    </TabItem>
+</Tabs>
+
+## Setting up GitHub
+
+If you don't already have a Github account, create one at [github.com](https://github.com/). Use your personal email to create this account, NOT a school or organization one.
+
+Click on your profile icon in the top right, then click `profile`
+
+<Image src={img_find_github_profile} width={400} alt="Get to profile" />
+
+Once inside your personal page, click `New Repository`. Then enter a name for the repo, and click `Create Repository`
+
+<Image src={img_create_repo} width={600} alt="Create Repo" />
+
+## Linking Git to GitHub
+
+:::tip
+    If you have already used Microsoft's GitHub extension for VSCode before, Git should already be linked, so you may be able to skip this section.
+:::
+
+In the settings menu of your GitHub account, go to `Developer Settings->Personal Access Tokens->Tokens(classic)`.
+
+You should see an option to generate a new token.
+
+<Image src={img_PAT_create} width={600} alt="Generate PAT" />
+
+Click on it and select `Generate New Token (classic)`
+
+<Image src={img_PAT_mode_select} width={400} alt="Classic mode token gen" />
+
+You will be prompted for a password, and then will see this screen: 
+
+<Image src={img_PAT_create_permissions} width={600} alt="Set Permissions for PAT" />
+
+:::danger
+    DO NOT SHARE YOUR PERSONAL ACCESS TOKEN WITH ANYBODY. This can be used to get access to your GitHub account.
+:::
+
+Generally, it is best to select only the scopes, or permissions, that you need and _are going to use_ when generating your Personal Access Token (PAT). However, that is beyond the scope of this guide, so for now select all of the scopes (you can change this later), or read about scopes more [here](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps#available-scopes).
+
+Once you have selected your scopes, scroll down to the bottom and click `Generate Token`. Once it is generated, copy it, because it will only be shown to you once.
+
+
+To safely load our credentials, we use the [Github Credential Manager](https://github.com/git-ecosystem/git-credential-manager) (or [this link](https://docs.github.com/en/get-started/git-basics/caching-your-github-credentials-in-git) for Github's guide to the GCM).
+<Tabs syncKey="OSes">
+    <TabItem label="Linux">
+        To install the GCM on Linux, we can use the script provided by the [GCM repo](https://github.com/git-ecosystem/git-credential-manager/blob/release/docs/install.md). You will prompted for your password.
+        ```bash
+        curl -L https://aka.ms/gcm/linux-install-source.sh | sh
+        git-credential-manager configure
+        ```
+        
+        The GCM by default doesn't save our credentials to disk, so to store them securely (encrypted), we can set the store to use GPG encryption.
+        ```bash
+        git config --global credential.credentialStore gpg
+        ```
+        Using GPG as the store, however, requires some additional setup. We need to use the `pass` utility, which in turns requires a GPG keypair.
+        ```bash
+            # generate GPG keypair
+            gpg --gen-key
+        ```
+        Follow the prompts, and make sure to remember the password you set. The final ouput should be something like this:
+        ```
+        public and secret key created and signed.
+
+        pub ed25519 yyyy-mm-dd
+            <GPG-ID>
+        uid         Your-name <Your Email>
+        sub cv25519 yyy-mm-dd
+        ```
+        Then, generate your stored passkey using the GPG-ID outputted.
+        ```bash
+            pass init <GPG-ID> 
+            # you will be prompted for your password.
+        ```
+        By default, the GCM with GPG only caches your credentials for a period of 10 minutes, so increase this to 2 hours, find or create the file `~/.gnupg/gpg-agent.conf` and add:
+        ```
+        default-cache-ttl 7200
+        max-cache-ttl 7200 
+        allow-loopback-pinentry
+        ```
+    </TabItem>  
+    <TabItem label="Windows">
+        On Windows, the GCM comes bundled with Git Bash, which we installed earlier. It will be preconfigured to use the Windows Credential Manager. Should you have a need to reset it to this default, you can do as such:
+        ```bash
+        git-credential-manager --global credential.credentialStore wincredman
+        ```
+    </TabItem>
+</Tabs>
+
+Now that the GCM is configured, the next time you do a Git action that requires authentication, such as pushing to a repo on GitHub, you will be prompted for your PAT and accompanying password. The credentials will be stored, and the only thing you will have to do is periodically re-enter your password.
+
+
+## Using Git
+
+<Tabs syncKey="OSes">
+    <TabItem label="Linux" >
+        
+        To start, open your projects folder. If you do not have one, it is generally good practice to put it in `/home/<user>/Documents/projects`.
+        Open the terminal, then navigate to the project folder
+        ```bash
+            mkdir /home/<user>/Documents/projects # if you do not yet have a projects folder
+            cd /home/<user>/Documents/projects # navigate to the projects folder
+        ``` 
+
+    </TabItem>  
+    <TabItem label="Windows">
+        To start, open your projects folder. If you do not have one, it is generally good practice to put it in `C:\Users\<user>\Documents`.
+        Open Git Bash, then navigate to the project folder
+        ```bash
+            mkdir C:/Users/<user>/Documents/projects # if you do not yet have a projects folder
+            cd C:/Users/<user>/Documents/projects # navigate to the projects folder
+        ``` 
+    </TabItem>
+</Tabs>
+
+From there, clone the repository
+
+```bash
+git clone https://github.com/<your-username>/hello-repo.git
+
+# this will create a subfolder within your projects folder, so you can navigate as such
+cd ./hello-repo
+```
+
+### Committing
+
+Committing in Git is the act of saving a snapshot of the changes of a project since the previous save.
+
+```bash
+# this will stage all changes into the commit, which may not always be wanted
+git commit -a
+```
+
+Upon entering this command, Git will enter your terminal session into a text editor such as `nano` or `vi`.
+It will prompt you to enter in a commit message, after which you need to exit the text editor and save the buffer.
+
+Some common methods of saving exiting the text editors are:
+
+|||
+|-|-|
+| Nano | type `Ctrl-x` then `Y` |
+| Vi | type `:w` then `:qa` |
+| Notepad | Save then exit in top right |
+
+#### Staging
+
+Comitting, however, does nothing on its own. First, you need to _stage_ files.
+
+You can think of your GitHub repo as three distinct areas. First you have your working directory, where the moment-to-moment changes you make live. Next is the staging area, where you can pick and choose files to prepare for commit. Finally, we have the repo itself, which keeps tracks of commits, which are bundles of staged changes.
+
+To stage files, you can use the git's `add` command.
+```bash
+
+git add /path/to/file.py
+
+# or to add all unstaged files
+git add .
+```
+
+You can see the current staging status of your project as such:
+```bash
+git status
+```
+
+To restore a file to the state of the last commit, you can use the `restore` command.
+```bash
+git restore /path/to/file.py
+
+# to restore all files
+git restore .
+```
+
+#### `.gitignore`
+
+If you want to never track or commit a file, keeping it out of a repo, create a file called `.gitignore` in the top-level directory of your project. On each new line, enter the file pattern which you do not want to track. For example, if you didn't want to commit build files in `build/`, or didn't want to commit your `.env` file, or didn't want any json file:
+
+`.gitignore`
+```
+build/
+.env
+*.json
+```
+
+
+### Remote Origin
+
+All of the commits you have done so far have been on your local copy of the repository. You can fetch the latest Git details (such as latest commit on the remote repo) as such:
+```bash
+    git fetch origin
+```
+Before doing any major git operation, such as pushing, pulling commits, and merging, creating, or deleting branches, it is good practice to fetch from origin.
+
+You can update your local copy with the latest changes by _pulling_ from the repo
+```bash
+    # `origin` refers to the remote repo hosted by GitHub
+    # `main` refers to the fact that the main branch on your local repo is set up to track the main branch on the remote repo.
+    git pull origin/main
+```
+
+You can update the remote host with your changes by _pushing_ to the repo.
+```bash
+    git push origin/main
+```
+### Branches
+
+According to the Git website, [branching](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell) is the act of diverging from the main line of development to continue to do work without messing with the main line.
+
+In practice, this means that a branch is effectively a copy of a snapshot of another branch at a specific point in time, on which you can commit, push, pull, and do all of the regular Git operations on. This allows multiple different features to be developed independently of each other, and merged when they are ready, as well as enabling [CI/CD](https://www.redhat.com/en/topics/devops/what-cicd-pipeline) pipelines.
+
+#### Creating Branches
+
+For our purposes, we can create branches in two ways: using the GitHub remote repo, or purely on the command line.
+
+<Tabs syncKey="remoteVScli">
+    <TabItem label="GitHub" >
+        
+        First, go to the home page of your GitHub repository, then click on the icon which says `<num> branches`.
+        <Image src={img_find_branch_menu} width={300} alt="Navigate GitHub to find branch menu" />
+        
+        This will take you to the branches page, where you can create a branch by clicking on the green button in the top right labeled `create new branch`. A submenu will pop up asking your for a name for the new branch
+        
+        <Image src={img_create_branch_menu} width={400} alt="Create branch" />
+        
+        Now that the new branch is created it only exists on the remote repo, so use Git's `checkout` command to set up a local version of the branch,
+        ```bash
+        git fetch origin
+        git checkout new-branch
+        ```
+        
+        Similarily, after a branch is deleted on GitHub, you can delete it locally do as such:
+        ```bash
+        git fetch origin --prune # prune fixes the remote pointers stored in git locally
+        git branch -D new-branch
+        ```
+    </TabItem>  
+    <TabItem label="Command Line">
+        To create and switch to a new branch from the terminal, we can use Git's `branch` and `checkout` commands.
+        ```bash
+        # replace `new-branch` with the name of your branch
+        git branch new-branch
+        git checkout new-branch
+        ```
+        This branch currently only exists on our machine, which can sometimes be useful. To publish it to the remote repo, we can push to origin with the `-u` flag to set upstream data. Be careful to not overwrite a branch tracked with the same name on the remote repo.
+        ```bash
+        git push -u origin new-branch
+        git fetch origin # To get new remote status
+        ```
+        Similarily, to delete a branch on the local repo and remote repo, you can do as such:
+        ```bash
+        git push -u origin --delete new-branch # delete on remote
+        git fetch origin --prune # delete remote pointer locally
+        git branch -D new-branch # delete local branch
+        ```
+    </TabItem>
+</Tabs>
+
+#### Merging Branches
+
+Having different branches isn't much use if they stay separate forever. To solve this issue, we can merge branches together.
+
+For example, if we want to merge a branch `new-branch` into the branch `main`, we would do as such:
+```bash
+# switch to main branch
+git checkout main
+
+# merge new-branch into main
+git merge new-branch
+```
+
+While this merges the changes from `new-branch` into `main`, `new-branch` still exists. There can often be use in leaving the branch alive, however for our purposes we can go ahead and delete this.
+
+#### Merge Conflicts
+
+When trying to merge a branch, you may see a message that there are conflicts which have prevented the merge, and a list of files which contain conflicts.
+This is a merge conflict. Merge conflicts occur when the changes in one branch conflict with the changes in another branch since the branches diverged.
+
+To resolve the merge conflict, open the file with the merge conflict in your favourite text editor, such as VSCode, nano, vim, etc.
+
+Conflicts are marked with these markers: `<<<<<<<`, `=======`, and `>>>>>>>`.
+```
+This code is from
+<<<<<<< HEAD
+The branch recieving the merge
+=======
+The branch being merged
+>>>>>>> new-branch
+```
+
+Delete the conflict markers and make the changes you want in the final merge. Once this is done for all files, stage your changes and create a commit to resolve the merge conflicts.
+
+
