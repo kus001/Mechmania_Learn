@@ -6,7 +6,7 @@ sidebar:
 author: Camleaf
 last-editor: Camleaf
 created-on: 26/04/23
-last-edited: 26/04/23
+last-edited: 26/06/26
 ---
 
 import { Steps, Card } from '@astrojs/starlight/components';
@@ -105,6 +105,17 @@ At the end of lessons, include more advanced tips if applicable.
 Guides are step-by-step instructions to accomplishing a specific task. Do not give the reader challenges to test their learning until the end of the guide.
 
 Guides should be self-contained in one file, and they have the same minimums as lessons. 
+
+#### Dependencies
+If a guide or lesson is dependant on another in a different course, please create a link to the dependency with the highest lesson number from each course at the top.
+
+For example, should you have a lesson `3.6 Burger Flipping`, but it depends on `2.6 Grill Operating`, you would add this to the top of the lesson:
+
+
+:::caution
+    It is recommended that you have read [2.6 Grill Operating](./#dependencies) before starting this lesson.
+:::
+
 
 
 #### Starlight components
