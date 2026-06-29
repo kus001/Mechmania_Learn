@@ -4,13 +4,13 @@ description: Serial, digital and analog, PWM
 author: Camleaf
 last-editor: Camleaf
 created-on: 26/06/25
-last-edited: 26/06/26
+last-edited: 26/06/28
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 :::caution
-    This lesson assumes you have a cursory knowledge of the C++ programming language. If you do not, we recommend reading tutorials such as [this one from W3schools](https://www.w3schools.com/cpp/cpp_getstarted.asp).
+    This lesson, and all proceeding lessons, assumes you have a cursory knowledge of the C++ programming language. If you do not, we recommend reading tutorials such as [this one from W3schools](https://www.w3schools.com/cpp/cpp_getstarted.asp). There also exist excellent resources online such as StackOverflow to ask questions to.
 
     It is also recommended that you have read [2.6 Microcontrollers](/lessons/u2-electrical/26-microcontrollers/) before starting this lesson. 
 :::
@@ -64,12 +64,12 @@ To write data to serial, we can use the two functions `Serial.print();` amd `Ser
 
 To actually read the serial data, you can open the serial monitor on the IDE by clicking this icon in the top right: 
 
-![Serial Monitor Icon](../../../../assets/lessons/u3-programming/04-01-serial-monitor-icon.png)
+![Serial Monitor Icon](../../../../assets/lessons/u3-programming/03-01-serial-monitor-icon.png)
 
 From there, you will be able to see every message that is sent through Serial from the MCU. If you do not see anything, try and check your connection to the MCU.
 Be sure to set the baud rate to 9600, so that the messages get through.
 
-![Serial Monitor Icon](../../../../assets/lessons/u3-programming/04-02-serial-monitor.png).
+![Serial Monitor Icon](../../../../assets/lessons/u3-programming/03-02-serial-monitor.png).
 
 
 ### Input/Output
@@ -174,7 +174,7 @@ PWM works by switching the power supply to a component on and off extremely quic
 
 The most common measurement used to describe PWM signals is the *duty cycle*, which is the percentage of time that a signal is HIGH over any given period.
 
-![Duty Cycle](../../../../assets/lessons/u3-programming/04-03-duty-cycle.jpg)
+![Duty Cycle](../../../../assets/lessons/u3-programming/03-03-duty-cycle.jpg)
 
 #### Outputting PWM
 
@@ -251,6 +251,8 @@ The most common measurement used to describe PWM signals is the *duty cycle*, wh
         PWM frequency represents the number of times an on/off cycle will repeat per second. A higher value is smoother, but may wear out components faster, a low value may result in audible noise or slow response.
 
         PWM resolution is the amount of bits the LEDC module will use for the duty cycle. So, in general, the accepted range when using `ledcWrite(pin, duty)` would be `0 -> (resolution**2)-1`.
+
+        Depending on the model, ESP32s have somewhere between 8 and 16 LEDC channels, where some have a maximum resolution of 8 bits, and some 16 bits. It is important to always check the datasheet for your specific model before using PWM signals.
     </TabItem>
 </Tabs>
 
