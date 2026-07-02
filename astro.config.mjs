@@ -13,6 +13,9 @@ export default defineConfig({
           customCss: [
               './src/styles/global.css',
           ],
+            components: {
+            PageTitle: './src/components/pageTitle.astro',
+          },
           sidebar: [
               {
                   label: 'Getting Started',
