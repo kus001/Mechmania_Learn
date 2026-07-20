@@ -1,0 +1,66 @@
+---
+title: 2.1 Measurement Units
+description: "Learn the fundamental electrical quantities: voltage, current, resistance, and their units."
+author: Kush Suthar
+lastEditor: Kush Suthar
+createdOn: 2026-07-17
+lastUpdated: 2026-07-20
+---
+
+import { Card } from '@astrojs/starlight/components';
+
+:::caution
+    Electrical systems can be dangerous if handled incorrectly. 
+    Always verify and be aware of voltage, polarity, and 
+    component ratings before connecting a circuit. 
+:::
+
+Before starting to design circuits or wiring robots, it is important to understand the basic measurements 
+used to describe electricity to know what you are working with.
+
+The 4 basic measurements are:
+
+- Voltage
+- Current
+- Resistance
+- Power
+
+We will dive into each of these measurements.
+
+## Voltage
+
+Voltage is the electrical push or force that drives current through a circuit. It is measured in **Volts (V)**.
+
+It provides the push that drives current through a circuit.
+
+:::danger
+Feeding higher voltage into a component than it is rated for will **damage** the component.
+:::
+
+## Current
+
+Current is the rate at which electric charge flows through a circuit. It is measured in **Amperes or Amps (A)**.
+It measures how much electric charge flows through the circuit each second.
+
+:::note
+Components draw current based on their electrical load. Your battery/power supply must be able to safely supply the 
+current your system demands.
+:::
+
+## Resistance
+
+Resistance opposes the flow of electric current through a circuit. It is measured in **Ohms (Ω)**.
+It restricts how much current can pass through the circuit. 
+
+## Ohm's Law
+
+Ohm's Law connects Voltage, Current, and Resistance into a single formula. 
+It is the most fundamental equation in electronics:
+
+`V = I × R`
+
+By rearranging this formula, you can calculate any missing value in your circuit:
+
+- **Calculate Voltage:** `V = I × R`
+- **Calculate Current:** `I = V / R`
+- **Calculate Resistance:** `R = V / I`
